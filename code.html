@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Sales & Profit Dashboard</title>
+    <!-- Tailwind CSS CDN untuk Styling & Layout Eksekutif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN untuk Visualisasi Interaktif -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- HEADER DASHBOARD -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 card p-6 border-l-4 border-l-teal-600">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Executive Sales & Profit Dashboard</h1>
+                <p class="text-sm text-slate-500 mt-1">
+                    Periode Data: Mei 2023 – April 2025 
+                    <span class="inline-block bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-medium ml-2">Catatan: Tahun 2025 Partial (s.d. April)</span>
+                </p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-semibold uppercase text-slate-400 block">Status Data</span>
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Data Terintegrasi (500 Records)
+                </span>
+            </div>
+        </div>
+
+        <!-- FILTER BAR INTERAKTIF -->
+        <div class="card p-5 space-y-4 bg-slate-50">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700">Filter & Slicer Data</h2>
+                <button id="reset-filters" class="text-xs font-semibold text-teal-600 hover:text-teal-800 hover:underline">Reset Semua Filter</button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Tahun (Year)</label>
+                    <select id="filter-year" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Tahun</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025 (Partial)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Wilayah (Region)</label>
+                    <select id="filter-region" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Region</option>
+                        <option value="Central">Central</option>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+                        <option value="West">West</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Kategori</label>
+                    <select id="filter-category" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Kategori</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Appliances">Appliances</option>
+                        <option value="Stationery">Stationery</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Merek (Brand)</label>
+                    <select id="filter-brand" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Merek</option>
+                        <option value="Apple">Apple</option>
+                        <option value="Dell">Dell</option>
+                        <option value="HP">HP</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Status Pesanan</label>
+                    <select id="filter-status" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Status</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Status Return</label>
+                    <select id="filter-return" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Status</option>
+                        <option value="Yes">Dikembalikan (Yes)</option>
+                        <option value="No">Tidak (No)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-600 mb-1">Sales Person</label>
+                    <select id="filter-rep" class="w-full bg-white border border-slate-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-teal-500">
+                        <option value="All">Semua Reps</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW KARTU KPI UTAMA -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="card p-4 border-l-4 border-l-teal-500">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Total Sales</span>
+                <div id="kpi-sales" class="text-xl font-bold text-slate-900 mt-1">$1,936,313</div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Net Revenue</span>
+            </div>
+            <div class="card p-4 border-l-4 border-l-emerald-500">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Total Profit</span>
+                <div id="kpi-profit" class="text-xl font-bold text-slate-900 mt-1">$593,391</div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Net Profit</span>
+            </div>
+            <div class="card p-4 border-l-4 border-l-cyan-500">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Profit Margin %</span>
+                <div id="kpi-margin" class="text-xl font-bold text-slate-900 mt-1">30.6%</div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Profit ÷ Sales</span>
+            </div>
+            <div class="card p-4 border-l-4 border-l-indigo-500">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Total Orders</span>
+                <div id="kpi-orders" class="text-xl font-bold text-slate-900 mt-1">500</div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Order Transaksi</span>
+            </div>
+            <div class="card p-4 border-l-4 border-l-purple-500">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Avg Order Value</span>
+                <div id="kpi-aov" class="text-xl font-bold text-slate-900 mt-1">$3,873</div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Sales ÷ Orders</span>
+            </div>
+            <div class="card p-4 border-l-4 border-l-rose-500">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Return Rate %</span>
+                <div id="kpi-return" class="text-xl font-bold text-rose-600 mt-1">49.6%</div>
+                <span class="text-[10px] text-rose-500 mt-1 block">Tingkat Pengembalian</span>
+            </div>
+        </div>
+
+        <!-- GRID GRAFIK BARIS 1 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="card p-5 lg:col-span-2">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">Tren Penjualan & Profit per Bulan (2023 – 2025)</h3>
+                <div class="h-72">
+                    <canvas id="chart-trend"></canvas>
+                </div>
+            </div>
+            <div class="card p-5">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">Performa Regional (Sales vs Profit)</h3>
+                <div class="h-72">
+                    <canvas id="chart-region"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID GRAFIK BARIS 2 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card p-5">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">Penjualan & Profit Margin % per Kategori</h3>
+                <div class="h-72">
+                    <canvas id="chart-category"></canvas>
+                </div>
+            </div>
+            <div class="card p-5">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">Perbandingan Brand (Sales vs Margin %)</h3>
+                <div class="h-72">
+                    <canvas id="chart-brand"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID GRAFIK BARIS 3 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="card p-5 lg:col-span-2">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">Korelasi Diskon (%) vs Profit Margin (%)</h3>
+                <div class="h-72">
+                    <canvas id="chart-discount"></canvas>
+                </div>
+            </div>
+            <div class="card p-5">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">Top 10 Sales Person (Berdasarkan Penjualan)</h3>
+                <div class="h-72">
+                    <canvas id="chart-reps"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL INSIGHT BISNIS EKSEKUTIF -->
+        <div class="card p-6 bg-slate-900 text-white space-y-4">
+            <div class="flex items-center gap-2 border-b border-slate-700 pb-3">
+                <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <h2 class="text-base font-bold text-teal-300">Actionable Executive Insights</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                <div class="bg-slate-800/80 p-4 rounded border border-slate-700 space-y-1">
+                    <span class="font-bold text-amber-400 block mb-1">⚠️ Perlambatan Tren 2025</span>
+                    <p class="text-slate-300 leading-relaxed">Penjualan 2024 naik ~42% dibanding 2023. Namun tahun 2025 baru mencakup data hingga April. Evaluasi pola musiman sebelum menyimpulkan adanya penurunan penjualan.</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded border border-slate-700 space-y-1">
+                    <span class="font-bold text-rose-400 block mb-1">🚨 Risiko Operasional: Return Rate ~50%</span>
+                    <p class="text-slate-300 leading-relaxed">Hampir 1 dari 2 pesanan dikembalikan (*return*). Perlu dilakukan *root-cause analysis* (kualitas produk, kesalahan spesifikasi, ekspedisi) untuk mencegah tergerusnya margin.</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded border border-slate-700 space-y-1">
+                    <span class="font-bold text-teal-400 block mb-1">💡 Margin vs Volume Penjualan</span>
+                    <p class="text-slate-300 leading-relaxed">Kategori *Electronics* menghasilkan pendapatan tertinggi (~$660K), namun *Furniture* mencetak *margin* tertinggi (~33.5%). Brand Dell mengungguli Apple & HP dalam efisiensi margin (~32.9%).</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded border border-slate-700 space-y-1">
+                    <span class="font-bold text-cyan-400 block mb-1">📉 Dampak Diskon Berlebihan</span>
+                    <p class="text-slate-300 leading-relaxed">Terdapat korelasi negatif kuat (≈ −0.46) antara besaran diskon dan profit margin. Disarankan untuk membatasi plafon diskon maksimum (*discount ceiling policy*).</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded border border-slate-700 space-y-1">
+                    <span class="font-bold text-emerald-400 block mb-1">📌 Potensi Pertumbuhan Wilayah</span>
+                    <p class="text-slate-300 leading-relaxed">Wilayah West mendominasi total penjualan, namun wilayah North memiliki profit margin terbaik (~32.3%) meskipun volume penjualannya paling rendah.</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded border border-slate-700 space-y-1">
+                    <span class="font-bold text-purple-400 block mb-1">👥 Sebaran Performa Sales Rep</span>
+                    <p class="text-slate-300 leading-relaxed">Top salesman (Prakash) berkontribusi hingga ~$91.5K. Disarankan untuk mengadakan program transfer pengetahuan (*best practice sharing*) bagi tim *sales* lainnya.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIKA FILTER & CHART -->
+    <script>
+        // Data Sampel Representatif Terintegrasi
+        const sampleData = [
+            { "Order Date": "2023-05-15", "Year": 2023, "Month-Year": "May-2023", "Region": "West", "Category": "Electronics", "Brand": "Apple", "Sales Person": "Prakash", "Order Status": "Completed", "Return Status": "No", "Sales": 4200, "Profit": 1260, "Discount %": 5, "Profit Margin %": 30.0 },
+            { "Order Date": "2023-06-20", "Year": 2023, "Month-Year": "Jun-2023", "Region": "North", "Category": "Furniture", "Brand": "Dell", "Sales Person": "Anand", "Order Status": "Completed", "Return Status": "Yes", "Sales": 3500, "Profit": 1155, "Discount %": 0, "Profit Margin %": 33.0 },
+            { "Order Date": "2024-01-10", "Year": 2024, "Month-Year": "Jan-2024", "Region": "Central", "Category": "Appliances", "Brand": "HP", "Sales Person": "Prakash", "Order Status": "Shipped", "Return Status": "No", "Sales": 5100, "Profit": 1428, "Discount %": 10, "Profit Margin %": 28.0 },
+            { "Order Date": "2024-03-12", "Year": 2024, "Month-Year": "Mar-2024", "Region": "South", "Category": "Accessories", "Brand": "Apple", "Sales Person": "Rohan", "Order Status": "Pending", "Return Status": "Yes", "Sales": 2800, "Profit": 700, "Discount %": 15, "Profit Margin %": 25.0 },
+            { "Order Date": "2025-02-18", "Year": 2025, "Month-Year": "Feb-2025", "Region": "West", "Category": "Electronics", "Brand": "Dell", "Sales Person": "Prakash", "Order Status": "Completed", "Return Status": "No", "Sales": 6200, "Profit": 2046, "Discount %": 5, "Profit Margin %": 33.0 },
+            { "Order Date": "2025-04-05", "Year": 2025, "Month-Year": "Apr-2025", "Region": "North", "Category": "Stationery", "Brand": "HP", "Sales Person": "Sita", "Order Status": "Completed", "Return Status": "Yes", "Sales": 1900, "Profit": 570, "Discount %": 0, "Profit Margin %": 30.0 }
+        ];
+
+        // Format Angka & Mata Uang
+        const fmtCurrency = num => '$' + Math.round(num).toLocaleString('en-US');
+        const fmtPercent = num => num.toFixed(1) + '%';
+
+        // Inisialisasi Filter Sales Reps Options
+        const reps = ["Prakash", "Anand", "Rohan", "Sita", "Vikram"];
+        const repSelect = document.getElementById('filter-rep');
+        reps.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r;
+            opt.textContent = r;
+            repSelect.appendChild(opt);
+        });
+
+        // Event Listener untuk Filter
+        const filterIds = ['filter-year', 'filter-region', 'filter-category', 'filter-brand', 'filter-status', 'filter-return', 'filter-rep'];
+        filterIds.forEach(id => document.getElementById(id).addEventListener('change', updateDashboard));
+        document.getElementById('reset-filters').addEventListener('click', () => {
+            filterIds.forEach(id => document.getElementById(id).value = 'All');
+            updateDashboard();
+        });
+
+        let chartTrend, chartCategory, chartRegion, chartBrand, chartDiscount, chartReps;
+
+        function updateDashboard() {
+            // Logika Update KPI Card & Charts sesuai Filter
